@@ -4,14 +4,11 @@ metadata:
   name: php-sample-app
 spec:
   source:
-    git:
-      ref: master
-      uri: 'https://github.com/openshift/ruby-ex.git'
-    type: Git
+    type: Binary
   output:
     to:
       kind: ImageStreamTag
-      name: php-sample-app
+      name: php-sample-app:latest
   strategy:
     type: Source
     sourceStrategy:
