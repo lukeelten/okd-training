@@ -19,7 +19,6 @@ pipeline {
             steps {
                 script {
                     checkout scm
-                    echo params
                 }
             }
         }
@@ -28,9 +27,9 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject() {
-                            openshift.apply(readFile("build/imagestream.yaml"))
-                            openshift.apply(readFile("build/buildconfig.yaml"))
+                        openshift.withProject(params.namespace) {
+                            openshift.apply(readFile("php/build/imagestream.yaml"))
+                            openshift.apply(readFile("php/build/buildconfig.yaml"))
                         }
                     }
                 }
@@ -40,6 +39,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
+                    sh 'cd php'
                     sh 'composer install'
                 }
             }
@@ -49,9 +49,9 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject() {
+                        openshift.withProject(params.namespace) {
                             def bc = openshift.selector("buildconfig", "php-sample-app")
-                            def build = bc.startBuild("--from-dir=.", "--wait")
+                            def build = bc.startBuild("--from-dir=php", "--wait")
 
                             build.logs('-f')
                         }
