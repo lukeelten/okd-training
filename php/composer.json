@@ -1,0 +1,21 @@
+{
+    "name": "lukeelten/php",
+    "type": "project",
+    "require": {
+        "slim/slim": "^4.9",
+        "slim/http": "^1.2",
+        "slim/psr7": "^1.5"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Lukeelten\\Php\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tobias Derksen",
+            "email": "tobias.derksen@codecentric.de"
+        }
+    ]
+}
