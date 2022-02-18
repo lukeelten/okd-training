@@ -39,8 +39,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'cd php'
-                    sh 'composer install'
+                    sh 'cd php && composer install'
                 }
             }
         }
