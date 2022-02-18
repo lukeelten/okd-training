@@ -46,12 +46,16 @@ pipeline {
         }
 
         stage('Build image') {
-            openshift.withCluster() {
-                openshift.withProject('beispiel') {
-                    def bc = openshift.selector("buildconfig", "php-sample-app")
-                    def build = bc.startBuild("--from-dir=.", "--wait")
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject('beispiel') {
+                            def bc = openshift.selector("buildconfig", "php-sample-app")
+                            def build = bc.startBuild("--from-dir=.", "--wait")
 
-                    build.logs('-f')
+                            build.logs('-f')
+                        }
+                    }
                 }
             }
         }
