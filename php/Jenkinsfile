@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject('beispiel') {
+                        openshift.withProject() {
                             openshift.apply(readFile("build/imagestream.yaml"))
                             openshift.apply(readFile("build/buildconfig.yaml"))
                         }
@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject('beispiel') {
+                        openshift.withProject() {
                             def bc = openshift.selector("buildconfig", "php-sample-app")
                             def build = bc.startBuild("--from-dir=.", "--wait")
 
