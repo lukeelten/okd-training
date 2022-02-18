@@ -1,0 +1,22 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: php-sample-app
+spec:
+  source:
+    git:
+      ref: master
+      uri: 'https://github.com/openshift/ruby-ex.git'
+    type: Git
+  output:
+    to:
+      kind: ImageStreamTag
+      name: php-sample-app
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'php:7.4'
+        namespace: openshift
+      env: []

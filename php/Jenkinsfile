@@ -1,0 +1,60 @@
+parameters {
+    string(name: 'namespace', description: 'Ziel Project zum Deployen')
+}
+
+pipeline {
+
+    agent {
+        node {
+            label 'php'
+        }
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout scm
+                    echo params
+                }
+            }
+        }
+
+        stage('Prepare Environment') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject('beispiel') {
+                            openshift.apply(readFile("build/imagestream.yaml"))
+                            openshift.apply(readFile("build/buildconfig.yaml"))
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh 'composer install'
+                }
+            }
+        }
+
+        stage('Build image') {
+            openshift.withCluster() {
+                openshift.withProject('beispiel') {
+                    def bc = openshift.selector("buildconfig", "php-sample-app")
+                    def build = bc.startBuild("--from-dir=.", "--wait")
+
+                    build.logs('-f')
+                }
+            }
+        }
+    }
+
+}
