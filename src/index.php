@@ -26,7 +26,28 @@ $app->get('/hello', function (Request $request, Response $response, array $args)
     return $response;
 });
 
-$todoPersistence = new FilesystemPersistence("/tmp/todo");
+// Todo Daten werden einfach in das Dateisystem geschrieben
+$todoPath = getenv("TODO_PATH");
+if ($todoPath == false) {
+    $todoPath = "/tmp/todo";
+}
+$todoPersistence = new FilesystemPersistence($todoPath);
+
+/*
+// Todo Daten werden in eine Datenbank geschrieben.
+$driver = getenv("DB_DRIVER");
+$hostname = getenv("DB_HOST");
+$database = getenv("DB_NAME");
+$user = getenv("DB_USER");
+$password = getenv("DB_PASSWORD");
+
+$db = new PDO($driver . ":host=" . $hostname . ";dbname=" . $database, $user, $password);
+$persistence = new DatabasePersistence($db, "todo");
+$persistence->createSchema();
+
+ */
+
 setupTodoApi($app, $todoPersistence);
+
 
 $app->run();
