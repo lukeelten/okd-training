@@ -24,34 +24,38 @@ pipeline {
         }
 
         stage('Prepare Environments') {
-            openshift.withCluster() {
-                openshift.withProject(params.namespace) {
-                    parallel {
-                        stage("Build environment") {
-                            steps {
-                                script {
+            parallel {
+                stage("Build environment") {
+                    steps {
+                        script {
+                            openshift.withCluster() {
+                                openshift.withProject(params.namespace) {
                                     openshift.apply(readFile("build/imagestream.yaml"))
                                     openshift.apply(readFile("build/buildconfig.yaml"))
                                 }
                             }
                         }
+                    }
+                }
 
-                        stage("Deploy environment") {
-                            steps {
-                                script {
+                stage("Deploy environment") {
+                    steps {
+                        script {
+                            openshift.withCluster() {
+                                openshift.withProject(params.namespace) {
                                     openshift.apply(readFile("deploy/deployment.yaml"))
                                     openshift.apply(readFile("deploy/service.yaml"))
                                     openshift.apply(readFile("deploy/route.yaml"))
                                 }
                             }
                         }
+                    }
+                }
 
-                        stage("Install dependencies") {
-                            steps {
-                                script {
-                                    sh 'composer install'
-                                }
-                            }
+                stage("Install dependencies") {
+                    steps {
+                        script {
+                            sh 'composer install'
                         }
                     }
                 }
