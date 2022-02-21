@@ -79,8 +79,10 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject(params.namespace) {
                             def istag = openshift.selector("imagestreamtag", "php-todo-app:latest")
-                            def imageReference = istag.image.dockerImageReference
-                            echo imageReference
+                            def imageReference = istag.object().image.dockerImageReference
+                            def deployment = openshift.selector("deployment", "php-todo-app").object()
+                            deployment.spec.template.spec.containers[0].image = imageReference
+                            openshift.apply(deployment)
                         }
                     }
                 }
