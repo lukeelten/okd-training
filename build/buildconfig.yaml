@@ -25,4 +25,6 @@ spec:
         kind: ImageStreamTag
         name: 'php:7.4-ubi8'
         namespace: openshift
-      env: []
+      env:
+        - name: DOCUMENTROOT
+          value: /src
