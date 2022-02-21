@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-todo-app
+spec:
+  selector:
+    matchLabels:
+      app: php-todo-app
+  template:
+    metadata:
+      labels:
+        app: php-todo-app
+    spec:
+      containers:
+        - name: main
+          image: php-todo-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP

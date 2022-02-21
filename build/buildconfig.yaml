@@ -1,14 +1,14 @@
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  name: php-sample-app
+  name: php-todo-app
 spec:
   source:
     type: Binary
   output:
     to:
       kind: ImageStreamTag
-      name: php-sample-app:latest
+      name: php-todo-app:latest
   strategy:
     type: Source
     sourceStrategy:

@@ -1,0 +1,14 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: php-todo-app
+spec:
+  to:
+    kind: Service
+    name: php-todo-app
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: Edge
+  wildcardPolicy: None
