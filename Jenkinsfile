@@ -87,7 +87,7 @@ pipeline {
 
                             def deployment = openshift.selector("deployment", "php-todo-app").object()
                             deployment.spec.template.spec.containers[0].image = imageReference
-                            deployment.spec.paused = 'false'
+                            deployment.spec.paused = false
                             openshift.apply(deployment)
                         }
                     }
