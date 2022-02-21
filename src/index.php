@@ -18,7 +18,7 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 });
 
 $app->get('/hello', function (Request $request, Response $response, array $args) {
-    $response->getBody()->write("Hello OpenShift");
+    $response->getBody()->write("Hello OpenShift from PHP Application");
     return $response;
 });
 
