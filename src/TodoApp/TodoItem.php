@@ -25,6 +25,8 @@ class TodoItem {
         $todo->id = $item["id"];
         $todo->text = $item["text"];
         $todo->done = $item["done"];
+
+        return $todo;
     }
 
 }
