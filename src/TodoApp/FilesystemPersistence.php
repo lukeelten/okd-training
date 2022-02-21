@@ -23,7 +23,7 @@ class FilesystemPersistence implements TodoPersistence {
             }
 
             $content = file_get_contents($this->basePath . "/" . $file);
-            $item = json_decode($content);
+            $item = json_decode($content, true);
             $items[] = TodoItem::fromJson($item);
         }
 
@@ -36,7 +36,7 @@ class FilesystemPersistence implements TodoPersistence {
         }
 
         $content = file_get_contents($this->basePath . "/" . $id);
-        $item = json_decode($content);
+        $item = json_decode($content, true);
         return TodoItem::fromJson($item);
     }
 
