@@ -15,7 +15,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
                 script {
                     checkout scm
@@ -23,41 +23,24 @@ pipeline {
             }
         }
 
-        stage('Prepare Environments') {
-            parallel {
-                stage("Build environment") {
-                    steps {
-                        script {
-                            openshift.withCluster() {
-                                openshift.withProject(params.namespace) {
-                                    openshift.apply(readFile("build/imagestream.yaml"))
-                                    openshift.apply(readFile("build/buildconfig.yaml"))
-                                }
-                            }
+        stage("Prepare build environment") {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(params.namespace) {
+                            openshift.apply(readFile("build/imagestream.yaml"))
+                            openshift.apply(readFile("build/buildconfig.yaml"))
                         }
                     }
                 }
+            }
+        }
 
-                stage("Deploy environment") {
-                    steps {
-                        script {
-                            openshift.withCluster() {
-                                openshift.withProject(params.namespace) {
-                                    openshift.apply(readFile("deploy/deployment.yaml"))
-                                    openshift.apply(readFile("deploy/service.yaml"))
-                                    openshift.apply(readFile("deploy/route.yaml"))
-                                }
-                            }
-                        }
-                    }
-                }
 
-                stage("Install dependencies") {
-                    steps {
-                        script {
-                            sh 'composer install'
-                        }
-                    }
+        stage("Install dependencies") {
+            steps {
+                script {
+                    sh 'composer install'
                 }
             }
         }
@@ -71,6 +54,20 @@ pipeline {
                             def build = bc.startBuild("--from-dir=.", "--wait")
 
                             build.logs('-f')
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Prepare deployment") {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(params.namespace) {
+                            openshift.apply(readFile("deploy/deployment.yaml"))
+                            openshift.apply(readFile("deploy/service.yaml"))
+                            openshift.apply(readFile("deploy/route.yaml"))
                         }
                     }
                 }
