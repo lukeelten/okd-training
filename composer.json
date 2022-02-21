@@ -5,7 +5,8 @@
         "slim/slim": "^4.9",
         "slim/http": "^1.2",
         "slim/psr7": "^1.5",
-        "ramsey/uuid": "^4.2"
+        "ramsey/uuid": "^4.2",
+        "promphp/prometheus_client_php": "^2.4"
     },
     "license": "MIT",
     "autoload": {

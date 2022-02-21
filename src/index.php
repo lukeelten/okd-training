@@ -10,6 +10,7 @@ use Slim\Factory\ServerRequestCreatorFactory;
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once __DIR__ . '/todo.php';
+require_once __DIR__ . '/metrics.php';
 
 AppFactory::setSlimHttpDecoratorsAutomaticDetection(false);
 ServerRequestCreatorFactory::setSlimHttpDecoratorsAutomaticDetection(false);
@@ -48,6 +49,6 @@ $persistence->createSchema();
  */
 
 setupTodoApi($app, $todoPersistence);
-
+setupMetrics($app);
 
 $app->run();
