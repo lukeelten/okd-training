@@ -2,24 +2,24 @@
 
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
-use Prometheus\Storage\InMemory;
+use Prometheus\Storage\APC;
 use Slim\App;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 
 function setupMetrics(App $app) {
-    $registry = new CollectorRegistry(new InMemory());
+    $registry = new CollectorRegistry(new APC());
 
-    $counter = $registry->registerCounter("php_todo_app", "request", "requests to the php webserver", ["method", "scheme", "path", "code"]);
+    $counter = $registry->registerCounter("php_todo_app_endpoints", "request", "requests to the php webserver", ["method", "scheme", "path", "code"]);
 
-    $app->add(function ($request, $response, $next) use ($counter) {
+    $app->add(function ($request, $next) use ($counter) {
         $uri = $request->getUri();
         $scheme = $uri->getScheme();
         $method = $request->getMethod();
         $path = $uri->getPath();
 
-        $response = $next($request, $response);
+        $response = $next->handle($request);
 
         $counter->inc([$method, $scheme, $path, $response->getStatusCode()]);
 

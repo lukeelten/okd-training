@@ -16,6 +16,7 @@ AppFactory::setSlimHttpDecoratorsAutomaticDetection(false);
 ServerRequestCreatorFactory::setSlimHttpDecoratorsAutomaticDetection(false);
 
 $app = AppFactory::create();
+setupMetrics($app);
 
 $app->get('/', function (Request $request, Response $response, array $args) {
     $response->getBody()->write("Hello OpenShift");
@@ -49,6 +50,5 @@ $persistence->createSchema();
  */
 
 setupTodoApi($app, $todoPersistence);
-setupMetrics($app);
 
 $app->run();
