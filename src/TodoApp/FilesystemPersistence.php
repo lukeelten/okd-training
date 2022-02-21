@@ -61,7 +61,7 @@ class FilesystemPersistence implements TodoPersistence {
         }
 
         if (isset($patch["done"])) {
-            $item->done = $patch["done"];
+            $item->done = boolval($patch["done"]);
         }
 
         $this->saveItem($item);

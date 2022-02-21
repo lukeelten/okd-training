@@ -68,7 +68,7 @@ function setupTodoApi(App $app, TodoPersistence $persistence) {
         return $response->withStatus(404);
     });
 
-    $app->patch('/api/v1/todo/{id}', function (Request $request, Response $response, array $args)  use ($persistence) {
+    $app->post('/api/v1/todo/{id}', function (Request $request, Response $response, array $args)  use ($persistence) {
         $id = $args["id"];
 
         $body = $request->getParsedBody();

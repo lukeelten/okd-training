@@ -69,7 +69,7 @@ class DatabasePersistence implements TodoPersistence
         }
 
         if (isset($patch["done"])) {
-            $item->done = $patch["done"];
+            $item->done = boolval($patch["done"]);
         }
 
         $stmt = $this->db->prepare("UPDATE " . $this->table . " SET text = ?, done = ? WHERE id = ? LIMIT 1");
