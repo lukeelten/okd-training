@@ -23,23 +23,37 @@ pipeline {
             }
         }
 
-        stage('Prepare Environment') {
-            steps {
-                script {
-                    openshift.withCluster() {
-                        openshift.withProject(params.namespace) {
-                            openshift.apply(readFile("build/imagestream.yaml"))
-                            openshift.apply(readFile("build/buildconfig.yaml"))
+        stage('Prepare Environments') {
+            openshift.withCluster() {
+                openshift.withProject(params.namespace) {
+                    parallel {
+                        stage("Build environment") {
+                            steps {
+                                script {
+                                    openshift.apply(readFile("build/imagestream.yaml"))
+                                    openshift.apply(readFile("build/buildconfig.yaml"))
+                                }
+                            }
+                        }
+
+                        stage("Deploy environment") {
+                            steps {
+                                script {
+                                    openshift.apply(readFile("deploy/deployment.yaml"))
+                                    openshift.apply(readFile("deploy/service.yaml"))
+                                    openshift.apply(readFile("deploy/route.yaml"))
+                                }
+                            }
+                        }
+
+                        stage("Install dependencies") {
+                            steps {
+                                script {
+                                    sh 'composer install'
+                                }
+                            }
                         }
                     }
-                }
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    sh 'composer install'
                 }
             }
         }
@@ -59,29 +73,17 @@ pipeline {
             }
         }
 
-        stage('Prepare Deployment') {
-            steps {
-                script {
-                    openshift.withCluster() {
-                        openshift.withProject(params.namespace) {
-                            openshift.apply(readFile("deploy/deployment.yaml"))
-                            openshift.apply(readFile("deploy/service.yaml"))
-                            openshift.apply(readFile("deploy/route.yaml"))
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Deploy latest image') {
+        stage('Deploy application') {
             steps {
                 script {
                     openshift.withCluster() {
                         openshift.withProject(params.namespace) {
                             def istag = openshift.selector("imagestreamtag", "php-todo-app:latest")
                             def imageReference = istag.object().image.dockerImageReference
+
                             def deployment = openshift.selector("deployment", "php-todo-app").object()
                             deployment.spec.template.spec.containers[0].image = imageReference
+                            deployment.spec.paused = 'false'
                             openshift.apply(deployment)
                         }
                     }

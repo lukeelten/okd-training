@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: php-todo-app
 spec:
+  paused: true
   selector:
     matchLabels:
       app: php-todo-app
