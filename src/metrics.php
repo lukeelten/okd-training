@@ -10,6 +10,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 function setupMetrics(App $app) {
     $registry = new CollectorRegistry(new APC());
+    
+    
 
     $counter = $registry->registerCounter("php_todo_app_endpoints", "request", "requests to the php webserver", ["method", "scheme", "path", "code"]);
 
